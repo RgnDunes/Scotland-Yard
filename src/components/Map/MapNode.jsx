@@ -55,6 +55,14 @@ function MapNode({ nodeId, isHighlighted, isHovered, hasDetective, hasMrX, isSel
       aria-label={`Station ${nodeId}${isHighlighted ? ', valid move' : ''}${hasDetective ? ', occupied by detective' : ''}${hasMrX ? ', Mr. X location' : ''}`}
       aria-pressed={isSelected || undefined}
     >
+      {/* Invisible larger hit area for easier clicking */}
+      <circle
+        cx={loc.x}
+        cy={loc.y}
+        r={radius + 8}
+        fill="transparent"
+        stroke="none"
+      />
       <circle
         cx={loc.x}
         cy={loc.y}
