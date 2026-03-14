@@ -1,7 +1,14 @@
 <!DOCTYPE html><html><head><script>
+// SPA redirect for GitHub Pages — preserves client-side route across 404 reload
 var l=window.location;
-l.replace(l.protocol+'//'+l.hostname+(l.port?':'+l.port:'')+
-  l.pathname.split('/').slice(0,2).join('/')+'/?/'+
-  l.pathname.slice(1).replace(/&/g,'~and~')+
-  (l.search?'&'+l.search.slice(1).replace(/&/g,'~and~'):'')+l.hash);
+// segmentCount=1 for project pages (e.g., /Scotland-Yard/...)
+var seg=1;
+var base=l.pathname.split('/').slice(0,1+seg).join('/');
+var path=l.pathname.slice(base.length);
+l.replace(
+  l.protocol+'//'+l.hostname+(l.port?':'+l.port:'')+
+  base+'/?/'+
+  path.slice(1).replace(/&/g,'~and~')+
+  (l.search?'&'+l.search.slice(1).replace(/&/g,'~and~'):'')+l.hash
+);
 </script></head></html>
