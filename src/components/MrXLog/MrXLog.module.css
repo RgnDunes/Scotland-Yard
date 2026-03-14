@@ -1,0 +1,133 @@
+/* ── Mr. X Log Container ──────────────────────────────────── */
+.mrxLog {
+  background: var(--bg-surface);
+  border-radius: var(--radius-md);
+  padding: 14px;
+  border: 1px solid var(--color-border);
+}
+
+.logTitle {
+  font-family: var(--font-heading);
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--mrx-accent);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-bottom: 10px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid var(--color-border);
+}
+
+/* ── Log Header ───────────────────────────────────────────── */
+.logHeader {
+  display: flex;
+  align-items: center;
+  padding: 4px 8px;
+  margin-bottom: 4px;
+}
+
+.logHeaderTurn,
+.logHeaderTicket,
+.logHeaderPosition {
+  font-family: var(--font-body);
+  font-size: 10px;
+  font-weight: 600;
+  color: var(--color-text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+.logHeaderTurn {
+  width: 40px;
+}
+
+.logHeaderTicket {
+  flex: 1;
+}
+
+.logHeaderPosition {
+  width: 60px;
+  text-align: right;
+}
+
+/* ── Log List ─────────────────────────────────────────────── */
+.logList {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  max-height: 300px;
+  overflow-y: auto;
+}
+
+/* ── Log Entry ────────────────────────────────────────────── */
+.logEntry {
+  display: flex;
+  align-items: center;
+  padding: 6px 8px;
+  border-radius: var(--radius-sm);
+  background: var(--bg-card);
+}
+
+.logEntryRevealed {
+  background: var(--mrx-bg);
+  border: 1px solid var(--mrx-color);
+}
+
+.logTurnCol {
+  width: 40px;
+}
+
+.logTurnNumber {
+  font-family: var(--font-heading);
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--color-text-muted);
+}
+
+.logEntryRevealed .logTurnNumber {
+  color: var(--mrx-accent);
+}
+
+.logTicketCol {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.logTicketIcon {
+  font-size: 14px;
+  line-height: 1;
+}
+
+.logTicketName {
+  font-family: var(--font-body);
+  font-size: 12px;
+  color: var(--color-text);
+}
+
+.logPositionCol {
+  width: 60px;
+  text-align: right;
+}
+
+.logPositionRevealed {
+  font-family: var(--font-heading);
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--mrx-accent);
+}
+
+.logPositionHidden {
+  font-family: var(--font-heading);
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--color-text-muted);
+}
+
+.logEmpty {
+  color: var(--color-text-muted);
+  font-size: 12px;
+  text-align: center;
+  padding: 16px 0;
+}

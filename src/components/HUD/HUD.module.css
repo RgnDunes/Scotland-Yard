@@ -1,0 +1,203 @@
+/* ── Turn Banner ───────────────────────────────────────────── */
+.turnBannerWrapper {
+  position: fixed;
+  top: 16px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 100;
+  pointer-events: none;
+}
+
+.turnBanner {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 10px 24px;
+  border-radius: var(--radius-lg);
+  background: var(--bg-surface);
+  border: 1px solid var(--color-border);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
+  pointer-events: auto;
+}
+
+.turnBannerMrX {
+  background: var(--mrx-bg);
+  border-color: var(--mrx-color);
+}
+
+.turnPlayerName {
+  font-family: var(--font-heading);
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--color-text);
+}
+
+.turnBannerMrX .turnPlayerName {
+  color: var(--mrx-accent);
+}
+
+.turnCounter {
+  font-family: var(--font-body);
+  font-size: 13px;
+  color: var(--color-text-muted);
+  padding-left: 16px;
+  border-left: 1px solid var(--color-border);
+}
+
+/* ── Reveal Countdown ─────────────────────────────────────── */
+.revealCountdown {
+  display: inline-flex;
+  align-items: center;
+  padding: 6px 14px;
+  border-radius: var(--radius-md);
+  background: var(--bg-card);
+  border: 1px solid var(--color-border);
+  font-size: 13px;
+}
+
+.revealUrgent {
+  background: var(--mrx-bg);
+  border-color: var(--mrx-accent);
+}
+
+.revealText {
+  color: var(--color-text);
+  font-family: var(--font-body);
+}
+
+.revealUrgent .revealText {
+  color: var(--mrx-accent);
+}
+
+.revealNumber {
+  font-family: var(--font-heading);
+  font-size: 16px;
+  font-weight: 700;
+}
+
+/* ── Toast ─────────────────────────────────────────────────── */
+.toastContainer {
+  position: fixed;
+  top: 16px;
+  right: 16px;
+  z-index: 200;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  pointer-events: none;
+  max-width: 360px;
+}
+
+.toast {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 14px;
+  border-radius: var(--radius-md);
+  background: var(--bg-surface);
+  border: 1px solid var(--color-border);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.4);
+  pointer-events: auto;
+}
+
+.toastInfo {
+  border-left: 3px solid var(--color-primary);
+}
+
+.toastSuccess {
+  border-left: 3px solid var(--color-success);
+}
+
+.toastWarning {
+  border-left: 3px solid var(--color-warning);
+}
+
+.toastError {
+  border-left: 3px solid var(--color-danger);
+}
+
+.toastMessage {
+  flex: 1;
+  font-family: var(--font-body);
+  font-size: 13px;
+  color: var(--color-text);
+  line-height: 1.4;
+}
+
+.toastDismiss {
+  background: none;
+  color: var(--color-text-muted);
+  font-size: 18px;
+  line-height: 1;
+  padding: 0 2px;
+  transition: color var(--t-fast);
+}
+
+.toastDismiss:hover {
+  color: var(--color-text);
+}
+
+/* ── Action Log ───────────────────────────────────────────── */
+.actionLog {
+  background: var(--bg-surface);
+  border-radius: var(--radius-md);
+  padding: 12px;
+  border: 1px solid var(--color-border);
+}
+
+.actionLogTitle {
+  font-family: var(--font-heading);
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--color-text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-bottom: 10px;
+}
+
+.actionLogList {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  max-height: 200px;
+  overflow-y: auto;
+}
+
+.actionLogEntry {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  padding: 4px 8px;
+  border-radius: var(--radius-sm);
+  font-size: 12px;
+}
+
+.actionLogEntry:nth-child(odd) {
+  background: var(--bg-card);
+}
+
+.actionLogTurn {
+  font-family: var(--font-heading);
+  font-weight: 700;
+  font-size: 11px;
+  color: var(--color-text-muted);
+  min-width: 28px;
+}
+
+.actionLogText {
+  color: var(--color-text);
+  font-family: var(--font-body);
+  line-height: 1.4;
+}
+
+.actionLogReveal {
+  color: var(--mrx-accent);
+  font-weight: 600;
+}
+
+.actionLogEmpty {
+  color: var(--color-text-muted);
+  font-size: 12px;
+  text-align: center;
+  padding: 12px 0;
+}
