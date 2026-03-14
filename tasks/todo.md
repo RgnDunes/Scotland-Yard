@@ -49,3 +49,23 @@
 - ESLint: 0 errors, 0 warnings
 - Vite build: succeeds (503 modules, 485KB JS output)
 - No console.log, no inline styles in new code, all CSS uses variables
+
+---
+
+# Polish: Accessibility, Error Boundaries, Performance
+
+## Plan
+
+- [x] Step 1: Create ErrorBoundary component (class component) with fallback prop, logger, dark themed CSS
+- [x] Step 2: Create LoadingSpinner component for Suspense fallback
+- [x] Step 3: Update App.jsx — wrap Routes in ErrorBoundary, lazy load Lobby/Game, Suspense
+- [x] Step 4: Performance — custom React.memo comparison on MapNode, verify MapEdge memo
+- [x] Step 5: Accessibility — role/tabIndex/aria-label/onKeyDown on MapNode, aria-live region in MapBoard, aria-label on SVG
+- [x] Step 6: Mobile layout — sidebar as bottom drawer, horizontal scroll tickets, larger touch targets, full-screen modals
+- [x] Step 7: Update README with badges, screenshot, rules, contributing guide
+
+## Results
+- Build: succeeds (508 modules, code-split Lobby/Game chunks)
+- Lint: 0 errors, 0 warnings
+- Tests: 45/45 passing
+- No console.log, no inline styles, no hardcoded colors in new code

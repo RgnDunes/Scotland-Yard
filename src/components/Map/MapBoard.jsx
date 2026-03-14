@@ -47,8 +47,10 @@ const NODE_IDS = Array.from({ length: 199 }, (_, i) => i + 1)
 
 function MapBoard({ onNodeClick: onNodeClickProp }) {
   const [isMobile, setIsMobile] = useState(false)
+  const [announcement, setAnnouncement] = useState('')
 
   const hoveredNode = useUIStore((s) => s.hoveredNode)
+  const selectedNode = useUIStore((s) => s.selectedNode)
   const setHoveredNode = useUIStore((s) => s.setHoveredNode)
   const highlightedNodes = useUIStore((s) => s.highlightedNodes)
   const setMapTransform = useUIStore((s) => s.setMapTransform)
@@ -65,6 +67,15 @@ function MapBoard({ onNodeClick: onNodeClickProp }) {
     window.addEventListener('resize', checkMobile)
     return () => window.removeEventListener('resize', checkMobile)
   }, [])
+
+  /* Announce turn changes for screen readers */
+  useEffect(() => {
+    if (!game) return
+    const currentPlayer = game.players[game.currentPlayerIndex]
+    if (currentPlayer) {
+      setAnnouncement(`Turn ${game.turn}: ${currentPlayer.name}'s turn. ${validMoves.length} valid moves available.`)
+    }
+  }, [game?.turn, game?.currentPlayerIndex, validMoves.length])
 
   const { scale, offset, handlers, containerRef } = useMapInteraction({
     disabled: isMobile,
@@ -157,10 +168,22 @@ function MapBoard({ onNodeClick: onNodeClickProp }) {
       ref={containerRef}
       {...(isMobile ? {} : handlers)}
     >
+      {/* Screen reader announcements for game events */}
+      <div
+        className={styles.srOnly}
+        aria-live="polite"
+        aria-atomic="true"
+        role="status"
+      >
+        {announcement}
+      </div>
+
       <svg
         className={styles.mapSvg}
         viewBox={VIEWBOX}
         preserveAspectRatio="xMidYMid meet"
+        aria-label="Scotland Yard game board with 199 stations connected by taxi, bus, underground, and ferry routes"
+        role="img"
       >
         <g transform={transformValue}>
           {/* Layer 1: Taxi edges (bottom) */}
@@ -223,6 +246,7 @@ function MapBoard({ onNodeClick: onNodeClickProp }) {
                   nodeId={nodeId}
                   isHighlighted={highlightedSet.has(nodeId) || validMoveSet.has(nodeId)}
                   isHovered={hoveredNode === nodeId}
+                  isSelected={selectedNode === nodeId}
                   hasDetective={occupiedByDetective.has(nodeId)}
                   hasMrX={mrxPosition === nodeId}
                   onClick={handleNodeClick}
