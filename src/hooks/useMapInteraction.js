@@ -3,22 +3,29 @@ import { useState, useCallback, useRef, useEffect } from 'react'
 const MIN_SCALE = 0.4
 const MAX_SCALE = 4.0
 const ZOOM_SENSITIVITY = 0.001
+const DRAG_THRESHOLD = 4
 
 /**
  * Hook for map pan/zoom interactions.
  * Returns { scale, offset, handlers, resetView, containerRef }
  *
- * - Pan: mouse drag or single-touch drag
+ * - Pan: mouse drag or single-touch drag (starts after 4px movement)
  * - Zoom: mouse wheel, centered on cursor position
  * - Double-click: reset to fit-all view
  * - Clamped between MIN_SCALE and MAX_SCALE
+ *
+ * Uses a drag threshold to distinguish clicks from drags.
+ * Pointer capture is only applied once dragging starts, so node
+ * clicks are never intercepted.
  */
 export function useMapInteraction({ disabled = false } = {}) {
   const [scale, setScale] = useState(1)
   const [offset, setOffset] = useState({ x: 0, y: 0 })
   const containerRef = useRef(null)
   const dragState = useRef({
+    isPointerDown: false,
     isDragging: false,
+    pointerId: null,
     startX: 0,
     startY: 0,
     startOffsetX: 0,
@@ -68,34 +75,46 @@ export function useMapInteraction({ disabled = false } = {}) {
       if (e.button !== 0) return
 
       dragState.current = {
-        isDragging: true,
+        isPointerDown: true,
+        isDragging: false,
+        pointerId: e.pointerId,
         startX: e.clientX,
         startY: e.clientY,
         startOffsetX: offset.x,
         startOffsetY: offset.y,
       }
-
-      e.currentTarget.setPointerCapture(e.pointerId)
     },
     [disabled, offset],
   )
 
   const handlePointerMove = useCallback(
     (e) => {
-      if (!dragState.current.isDragging) return
+      const state = dragState.current
+      if (!state.isPointerDown) return
 
-      const dx = e.clientX - dragState.current.startX
-      const dy = e.clientY - dragState.current.startY
+      const dx = e.clientX - state.startX
+      const dy = e.clientY - state.startY
+
+      if (!state.isDragging) {
+        if (Math.abs(dx) < DRAG_THRESHOLD && Math.abs(dy) < DRAG_THRESHOLD) {
+          return
+        }
+        state.isDragging = true
+        if (containerRef.current && state.pointerId != null) {
+          containerRef.current.setPointerCapture(state.pointerId)
+        }
+      }
 
       setOffset({
-        x: dragState.current.startOffsetX + dx,
-        y: dragState.current.startOffsetY + dy,
+        x: state.startOffsetX + dx,
+        y: state.startOffsetY + dy,
       })
     },
     [],
   )
 
   const handlePointerUp = useCallback(() => {
+    dragState.current.isPointerDown = false
     dragState.current.isDragging = false
   }, [])
 
