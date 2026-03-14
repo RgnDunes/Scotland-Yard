@@ -5,8 +5,9 @@ import { TOTAL_TURNS } from '../../engine/locations.js'
 import styles from './HUD.module.css'
 
 function TurnBanner() {
-  const currentPlayer = useGameStore((state) => state.getCurrentTurnPlayer())
-  const turn = useGameStore((state) => state.game?.turn ?? 0)
+  const game = useGameStore((state) => state.game)
+  const turn = game?.turn ?? 0
+  const currentPlayer = game ? game.players[game.currentPlayerIndex] : null
 
   if (!currentPlayer) return null
 

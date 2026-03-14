@@ -58,7 +58,6 @@ function Game() {
   const storeUseDoubleMove = useGameStore((s) => s.useDoubleMove)
   const passTurn = useGameStore((s) => s.passTurn)
   const setCurrentLocalPlayer = useGameStore((s) => s.setCurrentLocalPlayer)
-  const getCurrentTurnPlayer = useGameStore((s) => s.getCurrentTurnPlayer)
   const aiSettings = useGameStore((s) => s.aiSettings)
   const executeMrXAiTurn = useGameStore((s) => s.executeMrXAiTurn)
 
@@ -84,7 +83,7 @@ function Game() {
   const shownRevealsRef = useRef(0)
 
   const hasGame = game != null && (isLocal || isOnline)
-  const currentPlayer = hasGame ? getCurrentTurnPlayer() : null
+  const currentPlayer = hasGame ? game.players[game.currentPlayerIndex] : null
   const isFinished = game?.phase === 'finished'
   const isMrXTurn = currentPlayer?.role === 'mrx'
 

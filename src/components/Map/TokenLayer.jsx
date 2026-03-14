@@ -1,5 +1,5 @@
-import React from 'react'
-import { locations } from '../../engine/locations.js'
+import React, { useMemo } from 'react'
+import { locations, REVEAL_TURNS } from '../../engine/locations.js'
 import useGameStore from '../../store/gameStore.js'
 import DetectiveToken from './DetectiveToken.jsx'
 import MrXToken from './MrXToken.jsx'
@@ -10,19 +10,29 @@ import MrXToken from './MrXToken.jsx'
  */
 function TokenLayer() {
   const game = useGameStore((s) => s.game)
-  const isRevealTurn = useGameStore((s) => s.isRevealTurn)
-  const getLastRevealedPosition = useGameStore((s) => s.getLastRevealedPosition)
+
+  const detectives = useMemo(
+    () =>
+      game?.players.filter((p) => p.role === 'detective' && !p.isEliminated) ??
+      [],
+    [game],
+  )
 
   if (!game) return null
 
   const currentPlayer = game.players[game.currentPlayerIndex]
-  const detectives = game.players.filter((p) => p.role === 'detective' && !p.isEliminated)
   const mrx = game.players.find((p) => p.role === 'mrx')
 
   /* Determine Mr. X visibility and position */
-  const reveal = isRevealTurn()
+  const reveal = REVEAL_TURNS.includes(game.turn)
   const mrxVisible = reveal && mrx?.position != null
-  const lastRevealed = getLastRevealedPosition()
+  const revealedEntries = game.mrxState.positionHistory.filter(
+    (h) => h.revealed,
+  )
+  const lastRevealed =
+    revealedEntries.length > 0
+      ? revealedEntries[revealedEntries.length - 1].position
+      : null
   const mrxDisplayPosition = mrxVisible ? mrx.position : lastRevealed
   const mrxLoc = mrxDisplayPosition ? locations[mrxDisplayPosition] : null
 

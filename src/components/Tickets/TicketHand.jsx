@@ -7,7 +7,9 @@ const DETECTIVE_TRANSPORTS = ['taxi', 'bus', 'underground']
 const MRX_TRANSPORTS = ['taxi', 'bus', 'underground', 'black', 'double']
 
 function TicketHand({ playerId }) {
-  const player = useGameStore((state) => state.getPlayer(playerId))
+  const player = useGameStore(
+    (state) => state.game?.players.find((p) => p.id === playerId) ?? null,
+  )
 
   if (!player) return null
 

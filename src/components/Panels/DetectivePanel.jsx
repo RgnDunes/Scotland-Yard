@@ -1,11 +1,15 @@
-import { memo } from 'react'
+import { memo, useMemo } from 'react'
 import useGameStore from '../../store/gameStore.js'
 import TicketHand from '../Tickets/TicketHand.jsx'
 import styles from './Panels.module.css'
 
 function DetectivePanel() {
-  const detectives = useGameStore((state) => state.getDetectives())
-  const currentPlayer = useGameStore((state) => state.getCurrentTurnPlayer())
+  const game = useGameStore((state) => state.game)
+  const detectives = useMemo(
+    () => game?.players.filter((p) => p.role === 'detective') ?? [],
+    [game],
+  )
+  const currentPlayer = game ? game.players[game.currentPlayerIndex] : null
 
   if (detectives.length === 0) return null
 

@@ -4,6 +4,8 @@ on:
     branches: [main]
 permissions:
   contents: write
+env:
+  VITE_SERVER_URL: ${{ vars.VITE_SERVER_URL }}
 jobs:
   deploy:
     runs-on: ubuntu-latest

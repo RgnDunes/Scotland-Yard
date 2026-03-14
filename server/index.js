@@ -7,8 +7,19 @@ import { CLIENT_EVENTS, SERVER_EVENTS } from './events.js'
 
 const app = express()
 const httpServer = createServer(app)
+
+const ALLOWED_ORIGINS = [
+  'http://localhost:5173',
+  'http://localhost:5174',
+  'http://localhost:4173',
+  'https://rgndunes.github.io',
+]
+
 const io = new Server(httpServer, {
-  cors: { origin: '*', methods: ['GET', 'POST'] },
+  cors: {
+    origin: ALLOWED_ORIGINS,
+    methods: ['GET', 'POST'],
+  },
 })
 
 /** @type {Map<string, Room>} roomCode -> Room instance */

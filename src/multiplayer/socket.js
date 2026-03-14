@@ -1,12 +1,12 @@
 import { io } from 'socket.io-client'
 
-const SOCKET_URL =
-  (typeof import.meta !== 'undefined' && import.meta.env?.VITE_SOCKET_URL) ||
-  'http://localhost:3001'
+const SERVER_URL =
+  import.meta.env.VITE_SERVER_URL || 'http://localhost:3001'
 
-export const socket = io(SOCKET_URL, {
+export const socket = io(SERVER_URL, {
   autoConnect: false,
   reconnection: true,
-  reconnectionAttempts: 5,
+  reconnectionAttempts: 3,
   reconnectionDelay: 1000,
+  timeout: 5000,
 })
