@@ -1,0 +1,296 @@
+/* ── Shared Panel Styles ───────────────────────────────────── */
+.panelTitle {
+  font-family: var(--font-heading);
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--color-text);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  margin-bottom: 12px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid var(--color-border);
+}
+
+/* ── Detective Panel ──────────────────────────────────────── */
+.detectivePanel {
+  background: var(--bg-surface);
+  border-radius: var(--radius-md);
+  padding: 16px;
+  border: 1px solid var(--color-border);
+  overflow-y: auto;
+  max-height: 100%;
+}
+
+.detectiveList {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.detectiveCard {
+  background: var(--bg-card);
+  border-radius: var(--radius-md);
+  padding: 12px;
+  border: 1px solid var(--color-border);
+  transition: border-color var(--t-fast);
+}
+
+.detectiveCardActive {
+  border-color: var(--color-primary);
+  box-shadow: 0 0 0 1px var(--color-primary);
+}
+
+.detectiveCardEliminated {
+  opacity: 0.45;
+}
+
+.detectiveHeader {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 6px;
+}
+
+.detectiveColor {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  flex-shrink: 0;
+  background: var(--color-text-muted);
+}
+
+.detectiveColor1 {
+  background: var(--detective-1);
+}
+
+.detectiveColor2 {
+  background: var(--detective-2);
+}
+
+.detectiveColor3 {
+  background: var(--detective-3);
+}
+
+.detectiveColor4 {
+  background: var(--detective-4);
+}
+
+.detectiveColor5 {
+  background: var(--detective-5);
+}
+
+.detectiveColor6 {
+  background: var(--detective-6);
+}
+
+.detectiveName {
+  font-family: var(--font-heading);
+  font-size: 15px;
+  font-weight: 600;
+  flex: 1;
+}
+
+.detectiveBadge {
+  font-family: var(--font-body);
+  font-size: 10px;
+  font-weight: 600;
+  text-transform: uppercase;
+  color: var(--color-danger);
+  background: rgba(237, 66, 69, 0.15);
+  padding: 2px 6px;
+  border-radius: var(--radius-sm);
+}
+
+.detectivePosition {
+  font-size: 12px;
+  color: var(--color-text-muted);
+  margin-bottom: 8px;
+}
+
+.detectivePosition strong {
+  color: var(--color-text);
+  font-family: var(--font-heading);
+  font-size: 14px;
+}
+
+/* ── Mr. X Panel ──────────────────────────────────────────── */
+.mrxPanel {
+  background: var(--mrx-bg);
+  border-radius: var(--radius-md);
+  padding: 16px;
+  border: 1px solid var(--mrx-color);
+  overflow-y: auto;
+  max-height: 100%;
+}
+
+.panelTitleMrX {
+  font-family: var(--font-heading);
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--mrx-accent);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  margin-bottom: 12px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid var(--mrx-color);
+}
+
+.mrxInfo {
+  margin-bottom: 16px;
+}
+
+.mrxPositionBlock {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 14px;
+  background: var(--bg-card);
+  border-radius: var(--radius-md);
+  border: 1px solid var(--mrx-color);
+}
+
+.mrxPositionLabel {
+  font-family: var(--font-body);
+  font-size: 12px;
+  color: var(--color-text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.mrxPositionValue {
+  font-family: var(--font-heading);
+  font-size: 28px;
+  font-weight: 700;
+  color: var(--mrx-accent);
+}
+
+.mrxSection {
+  margin-bottom: 14px;
+}
+
+.mrxSectionTitle {
+  font-family: var(--font-heading);
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--color-text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-bottom: 8px;
+}
+
+/* ── Reveal Schedule ──────────────────────────────────────── */
+.revealSchedule {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+.revealTurnBadge {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border-radius: var(--radius-sm);
+  background: var(--bg-card);
+  border: 1px solid var(--color-border);
+  font-family: var(--font-heading);
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--color-text);
+}
+
+.revealTurnPast {
+  opacity: 0.35;
+  text-decoration: line-through;
+}
+
+.revealTurnCurrent {
+  background: var(--mrx-color);
+  border-color: var(--mrx-accent);
+  color: var(--color-text);
+  animation: revealPulse 1.2s ease-in-out infinite;
+}
+
+@keyframes revealPulse {
+  0%, 100% {
+    box-shadow: 0 0 0 0 rgba(255, 23, 68, 0.4);
+  }
+  50% {
+    box-shadow: 0 0 0 6px rgba(255, 23, 68, 0);
+  }
+}
+
+/* ── Player List ──────────────────────────────────────────── */
+.playerList {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.playerItem {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 10px;
+  border-radius: var(--radius-sm);
+  background: var(--bg-card);
+  transition: background var(--t-fast);
+}
+
+.playerItemActive {
+  background: var(--bg-surface);
+  box-shadow: inset 2px 0 0 var(--color-primary);
+}
+
+.playerItemEliminated {
+  opacity: 0.4;
+}
+
+.playerDot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--color-primary);
+  flex-shrink: 0;
+}
+
+.playerDotMrX {
+  background: var(--mrx-accent);
+}
+
+.playerName {
+  flex: 1;
+  font-family: var(--font-body);
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--color-text);
+}
+
+.roleBadge {
+  font-family: var(--font-body);
+  font-size: 10px;
+  font-weight: 600;
+  text-transform: uppercase;
+  padding: 2px 6px;
+  border-radius: var(--radius-sm);
+  letter-spacing: 0.03em;
+}
+
+.roleBadgeMrX {
+  background: rgba(198, 40, 40, 0.2);
+  color: var(--mrx-accent);
+}
+
+.roleBadgeDetective {
+  background: rgba(88, 101, 242, 0.15);
+  color: var(--color-primary);
+}
+
+.eliminatedBadge {
+  font-family: var(--font-body);
+  font-size: 10px;
+  font-weight: 600;
+  color: var(--color-danger);
+  text-transform: uppercase;
+}

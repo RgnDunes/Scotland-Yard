@@ -1,0 +1,147 @@
+/* ── Single Ticket ─────────────────────────────────────────── */
+.ticket {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 12px;
+  border-radius: var(--radius-md);
+  background: var(--bg-card);
+  border: 1px solid var(--color-border);
+  color: var(--color-text);
+  font-family: var(--font-body);
+  font-size: 13px;
+  font-weight: 500;
+  transition: background var(--t-fast), border-color var(--t-fast);
+}
+
+.ticket:hover:not(:disabled) {
+  border-color: var(--color-text-muted);
+}
+
+.ticketDisabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.ticketTaxi {
+  border-left: 3px solid var(--transport-taxi);
+}
+
+.ticketBus {
+  border-left: 3px solid var(--transport-bus);
+}
+
+.ticketUnderground {
+  border-left: 3px solid var(--transport-underground);
+}
+
+.ticketFerry {
+  border-left: 3px solid var(--transport-ferry);
+}
+
+.ticketBlack {
+  border-left: 3px solid var(--ticket-black);
+}
+
+.ticketDouble {
+  border-left: 3px solid var(--ticket-double);
+}
+
+.ticketIcon {
+  font-size: 16px;
+  line-height: 1;
+}
+
+.ticketLabel {
+  flex: 1;
+  text-align: left;
+}
+
+.ticketCount {
+  font-family: var(--font-heading);
+  font-weight: 700;
+  font-size: 15px;
+  min-width: 20px;
+  text-align: center;
+}
+
+/* ── Ticket Hand ──────────────────────────────────────────── */
+.ticketHand {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+/* ── Ticket Tracker ───────────────────────────────────────── */
+.tracker {
+  background: var(--bg-surface);
+  border-radius: var(--radius-md);
+  padding: 12px;
+  border: 1px solid var(--color-border);
+}
+
+.trackerTitle {
+  font-family: var(--font-heading);
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--color-text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-bottom: 10px;
+}
+
+.trackerList {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  max-height: 280px;
+  overflow-y: auto;
+}
+
+.trackerEntry {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 6px 10px;
+  border-radius: var(--radius-sm);
+  background: var(--bg-card);
+  font-size: 13px;
+}
+
+.trackerEntryRevealed {
+  background: var(--mrx-bg);
+  border: 1px solid var(--mrx-color);
+}
+
+.trackerTurn {
+  font-family: var(--font-heading);
+  font-weight: 700;
+  font-size: 14px;
+  min-width: 24px;
+  text-align: center;
+  color: var(--color-text-muted);
+}
+
+.trackerIcon {
+  font-size: 16px;
+  line-height: 1;
+}
+
+.trackerPosition {
+  flex: 1;
+  text-align: right;
+  font-family: var(--font-heading);
+  font-weight: 600;
+  font-size: 15px;
+}
+
+.trackerEntryRevealed .trackerPosition {
+  color: var(--mrx-accent);
+}
+
+.trackerEmpty {
+  color: var(--color-text-muted);
+  font-size: 12px;
+  text-align: center;
+  padding: 12px 0;
+}

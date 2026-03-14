@@ -1,0 +1,105 @@
+/* ── End Screen Overlay ────────────────────────────────────── */
+.endOverlay {
+  position: fixed;
+  inset: 0;
+  z-index: 500;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--bg-overlay);
+}
+
+.endMrXWin {
+  background: rgba(32, 0, 0, 0.92);
+}
+
+.endDetWin {
+  background: rgba(0, 20, 40, 0.92);
+}
+
+.endContent {
+  text-align: center;
+  padding: 48px 40px;
+  border-radius: var(--radius-lg);
+  max-width: 480px;
+  width: 90%;
+}
+
+.endMrXWin .endContent {
+  background: linear-gradient(
+    135deg,
+    var(--mrx-bg) 0%,
+    rgba(198, 40, 40, 0.15) 100%
+  );
+  border: 1px solid var(--mrx-color);
+}
+
+.endDetWin .endContent {
+  background: linear-gradient(
+    135deg,
+    rgba(33, 150, 243, 0.08) 0%,
+    rgba(59, 165, 93, 0.08) 100%
+  );
+  border: 1px solid var(--color-success);
+}
+
+.endTitle {
+  font-family: var(--font-heading);
+  font-size: 42px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  margin-bottom: 12px;
+}
+
+.endMrXWin .endTitle {
+  color: var(--mrx-accent);
+}
+
+.endDetWin .endTitle {
+  color: var(--color-success);
+}
+
+.endSubtitle {
+  font-family: var(--font-body);
+  font-size: 16px;
+  color: var(--color-text-muted);
+  margin-bottom: 20px;
+}
+
+.endReason {
+  font-family: var(--font-body);
+  font-size: 14px;
+  color: var(--color-text-muted);
+  padding: 10px 16px;
+  border-radius: var(--radius-md);
+  background: var(--bg-card);
+  margin-bottom: 32px;
+  display: inline-block;
+}
+
+.playAgainButton {
+  padding: 14px 40px;
+  border-radius: var(--radius-lg);
+  font-family: var(--font-heading);
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--color-text);
+  transition: background var(--t-fast);
+}
+
+.endMrXWin .playAgainButton {
+  background: var(--mrx-color);
+}
+
+.endMrXWin .playAgainButton:hover {
+  background: var(--mrx-accent);
+}
+
+.endDetWin .playAgainButton {
+  background: var(--color-success);
+}
+
+.endDetWin .playAgainButton:hover {
+  background: #2e9749;
+}
