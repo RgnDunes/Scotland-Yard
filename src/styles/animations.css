@@ -1,0 +1,62 @@
+@keyframes pulse {
+  0%,
+  100% {
+    opacity: 0.6;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1.15);
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes slideInTop {
+  from {
+    transform: translateY(-100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+@keyframes slideInRight {
+  from {
+    transform: translateX(100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+@keyframes glow {
+  0%,
+  100% {
+    box-shadow: 0 0 5px rgba(88, 101, 242, 0.3);
+  }
+  50% {
+    box-shadow: 0 0 20px rgba(88, 101, 242, 0.7);
+  }
+}
+
+@keyframes revealPulse {
+  0%,
+  100% {
+    box-shadow: 0 0 10px rgba(198, 40, 40, 0.4);
+  }
+  50% {
+    box-shadow: 0 0 30px rgba(198, 40, 40, 0.9);
+  }
+}
