@@ -15,10 +15,10 @@ const TRANSPORT_CLASSES = {
  * so taxi/bus/underground lines don't overlap when sharing a route.
  */
 const OFFSET_MAP = {
-  taxi: -3,
+  taxi: -5,
   bus: 0,
-  underground: 3,
-  ferry: 5,
+  underground: 5,
+  ferry: 8,
 }
 
 function computeOffset(fromLoc, toLoc, px) {

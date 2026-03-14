@@ -3,12 +3,14 @@ import { graph, TRANSPORT } from '../../engine/graph.js'
 import useUIStore from '../../store/uiStore.js'
 import useGameStore from '../../store/gameStore.js'
 import { useMapInteraction } from '../../hooks/useMapInteraction.js'
+import MapBackground from './MapBackground.jsx'
 import MapEdge from './MapEdge.jsx'
+import MapLegend from './MapLegend.jsx'
 import MapNode from './MapNode.jsx'
 import TokenLayer from './TokenLayer.jsx'
 import styles from './Map.module.css'
 
-const VIEWBOX = '0 0 1400 1000'
+const VIEWBOX = '0 0 1640 1230'
 const MOBILE_BREAKPOINT = 768
 
 /**
@@ -186,6 +188,9 @@ function MapBoard({ onNodeClick: onNodeClickProp }) {
         role="img"
       >
         <g transform={transformValue}>
+          {/* Layer 0: Geographic background */}
+          <MapBackground />
+
           {/* Layer 1: Taxi edges (bottom) */}
           <g>
             {edgesByTransport[TRANSPORT.TAXI].map((edge) => (
@@ -259,6 +264,8 @@ function MapBoard({ onNodeClick: onNodeClickProp }) {
           <TokenLayer />
         </g>
       </svg>
+
+      <MapLegend />
     </div>
   )
 }

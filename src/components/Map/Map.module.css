@@ -23,25 +23,25 @@
 
 .edgeTaxi {
   stroke: var(--transport-taxi);
-  stroke-width: 1.5;
-  opacity: 0.7;
+  stroke-width: 2;
+  opacity: 0.5;
 }
 
 .edgeBus {
   stroke: var(--transport-bus);
-  stroke-width: 2.5;
+  stroke-width: 3.5;
   opacity: 0.7;
 }
 
 .edgeUnderground {
   stroke: var(--transport-underground);
-  stroke-width: 3.5;
+  stroke-width: 4.5;
   opacity: 0.7;
 }
 
 .edgeFerry {
   stroke: var(--transport-ferry);
-  stroke-width: 3;
+  stroke-width: 3.5;
   stroke-dasharray: 8 4;
   opacity: 0.8;
 }
@@ -54,19 +54,26 @@
 
 .nodeFill {
   fill: #ffffff;
-  stroke: var(--bg-dark);
-  stroke-width: 1.5;
+  stroke: var(--transport-taxi);
+  stroke-width: 1.8;
+  filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.3));
 }
 
 .nodeUnderground .nodeFill {
-  stroke-width: 2.5;
+  stroke: var(--transport-underground);
+  stroke-width: 3;
+}
+
+.nodeBus .nodeFill {
+  stroke: var(--transport-bus);
+  stroke-width: 2.2;
 }
 
 .nodeLabel {
   fill: var(--bg-dark);
   font-family: var(--font-body);
-  font-size: 7px;
-  font-weight: 600;
+  font-size: 9px;
+  font-weight: 700;
   pointer-events: none;
   text-anchor: middle;
   dominant-baseline: central;
@@ -229,7 +236,7 @@
   }
 
   .nodeLabel {
-    font-size: 9px;
+    font-size: 11px;
   }
 
   .tokenCircle {

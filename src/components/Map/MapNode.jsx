@@ -1,16 +1,23 @@
 import React, { useCallback } from 'react'
 import { locations } from '../../engine/locations.js'
-import { UNDERGROUND_STATIONS } from '../../engine/graph.js'
+import { graph, UNDERGROUND_STATIONS } from '../../engine/graph.js'
 import styles from './Map.module.css'
 
 const undergroundSet = new Set(UNDERGROUND_STATIONS)
+
+/* Pre-compute which nodes have bus connections */
+const busSet = new Set()
+for (let i = 1; i <= 199; i++) {
+  if (graph[i]?.bus?.length > 0) busSet.add(i)
+}
 
 function MapNode({ nodeId, isHighlighted, isHovered, hasDetective, hasMrX, isSelected, onClick }) {
   const loc = locations[nodeId]
   if (!loc) return null
 
   const isUnderground = undergroundSet.has(nodeId)
-  const radius = isUnderground ? 10 : 8
+  const isBus = busSet.has(nodeId)
+  const radius = isUnderground ? 14 : isBus ? 12 : 11
 
   const handleClick = useCallback(
     (e) => {
@@ -33,6 +40,7 @@ function MapNode({ nodeId, isHighlighted, isHovered, hasDetective, hasMrX, isSel
 
   let groupClass = styles.node
   if (isUnderground) groupClass += ` ${styles.nodeUnderground}`
+  else if (isBus) groupClass += ` ${styles.nodeBus}`
   if (isHighlighted) groupClass += ` ${styles.nodeHighlighted}`
   if (isHovered) groupClass += ` ${styles.nodeHovered}`
   if (hasDetective || hasMrX) groupClass += ` ${styles.nodeOccupied}`
