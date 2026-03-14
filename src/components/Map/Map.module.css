@@ -1,0 +1,199 @@
+/* ── Map container ─────────────────────────────────────────── */
+.mapContainer {
+  width: 100%;
+  height: 100%;
+  position: relative;
+  overflow: hidden;
+  background: var(--bg-map);
+  touch-action: none;
+  user-select: none;
+}
+
+.mapSvg {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+/* ── Edges ─────────────────────────────────────────────────── */
+.edge {
+  pointer-events: none;
+  fill: none;
+}
+
+.edgeTaxi {
+  stroke: var(--transport-taxi);
+  stroke-width: 1.5;
+  opacity: 0.7;
+}
+
+.edgeBus {
+  stroke: var(--transport-bus);
+  stroke-width: 2.5;
+  opacity: 0.7;
+}
+
+.edgeUnderground {
+  stroke: var(--transport-underground);
+  stroke-width: 3.5;
+  opacity: 0.7;
+}
+
+.edgeFerry {
+  stroke: var(--transport-ferry);
+  stroke-width: 3;
+  stroke-dasharray: 8 4;
+  opacity: 0.8;
+}
+
+/* ── Nodes ─────────────────────────────────────────────────── */
+.node {
+  cursor: pointer;
+  transition: fill var(--t-fast), stroke var(--t-fast);
+}
+
+.nodeFill {
+  fill: #ffffff;
+  stroke: var(--bg-dark);
+  stroke-width: 1.5;
+}
+
+.nodeUnderground .nodeFill {
+  stroke-width: 2.5;
+}
+
+.nodeLabel {
+  fill: var(--bg-dark);
+  font-family: var(--font-body);
+  font-size: 7px;
+  font-weight: 600;
+  pointer-events: none;
+  text-anchor: middle;
+  dominant-baseline: central;
+}
+
+.nodeHighlighted .nodeFill {
+  fill: var(--color-success);
+  stroke: #ffffff;
+  stroke-width: 2;
+  animation: pulseGlow 1.2s ease-in-out infinite;
+}
+
+.nodeHovered .nodeFill {
+  fill: var(--color-primary);
+  stroke: #ffffff;
+  stroke-width: 2;
+}
+
+.nodeOccupied .nodeFill {
+  fill: var(--color-text-muted);
+}
+
+/* ── Tooltip ───────────────────────────────────────────────── */
+.tooltip {
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity var(--t-fast);
+}
+
+.tooltipVisible {
+  opacity: 1;
+}
+
+.tooltipBg {
+  fill: var(--bg-dark);
+  rx: 4;
+  ry: 4;
+}
+
+.tooltipText {
+  fill: var(--color-text);
+  font-family: var(--font-body);
+  font-size: 11px;
+  font-weight: 600;
+  text-anchor: middle;
+  dominant-baseline: central;
+}
+
+/* ── Tokens (shared) ───────────────────────────────────────── */
+.token {
+  pointer-events: none;
+  transition: transform var(--t-base);
+}
+
+.tokenCircle {
+  stroke: #ffffff;
+  stroke-width: 2;
+}
+
+.tokenText {
+  fill: #ffffff;
+  font-family: var(--font-heading);
+  font-size: 12px;
+  font-weight: 700;
+  text-anchor: middle;
+  dominant-baseline: central;
+}
+
+/* ── Detective token ───────────────────────────────────────── */
+.detectiveToken .tokenCircle {
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.4));
+}
+
+.tokenCurrentTurn .tokenCircle {
+  animation: bounce 1s ease-in-out infinite;
+}
+
+/* ── Mr. X token ───────────────────────────────────────────── */
+.mrxToken .tokenCircle {
+  fill: var(--mrx-color);
+  filter: drop-shadow(0 2px 6px rgba(198, 40, 40, 0.5));
+}
+
+.mrxReveal .tokenCircle {
+  animation: mrxPulse 1.4s ease-in-out infinite;
+}
+
+/* ── Keyframes ─────────────────────────────────────────────── */
+@keyframes pulseGlow {
+  0%, 100% {
+    filter: drop-shadow(0 0 3px var(--color-success));
+    opacity: 1;
+  }
+  50% {
+    filter: drop-shadow(0 0 10px var(--color-success));
+    opacity: 0.85;
+  }
+}
+
+@keyframes bounce {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-4px);
+  }
+}
+
+@keyframes mrxPulse {
+  0%, 100% {
+    filter: drop-shadow(0 0 4px var(--mrx-accent));
+    opacity: 1;
+  }
+  50% {
+    filter: drop-shadow(0 0 14px var(--mrx-accent));
+    opacity: 0.8;
+  }
+}
+
+/* ── Mobile: disable pan/zoom, scale to fit ────────────────── */
+@media (max-width: 767px) {
+  .mapContainer {
+    touch-action: auto;
+  }
+
+  .mapSvg {
+    width: 100%;
+    height: auto;
+  }
+}
