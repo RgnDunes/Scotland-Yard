@@ -16,6 +16,7 @@ import {
 import { checkWinCondition } from '../engine/winCondition.js'
 import { DETECTIVE_STARTING_POSITIONS } from '../engine/locations.js'
 import { getAllAdjacentNodeIds } from '../engine/graph.js'
+import { getMrXMove, getDetectiveAiMove } from '../engine/mrxAi.js'
 
 function shuffleArray(arr) {
   const a = [...arr]
@@ -50,8 +51,9 @@ const useGameStore = create(
     isMyTurn: false,
     validMoves: [],
     blackTicketMoves: [],
+    aiSettings: { mrxIsAi: false, mrxDifficulty: 'medium' },
 
-    initLocalGame: (playerNames, mrxPlayerIndex) => {
+    initLocalGame: (playerNames, mrxPlayerIndex, aiSettings) => {
       const players = playerNames.map((name, i) => {
         const isMrX = i === mrxPlayerIndex
         return createPlayer(
@@ -94,6 +96,7 @@ const useGameStore = create(
         isMyTurn: false,
         validMoves: [],
         blackTicketMoves: [],
+        aiSettings: aiSettings || { mrxIsAi: false, mrxDifficulty: 'medium' },
       })
     },
 
@@ -267,6 +270,124 @@ const useGameStore = create(
       return revealed.length > 0
         ? revealed[revealed.length - 1].position
         : null
+    },
+
+    /**
+     * Executes an AI turn for Mr. X.
+     * Calls getMrXMove to decide the move, then applies it to game state.
+     * Handles black ticket usage and double moves.
+     * Returns true if a move was made, false otherwise.
+     */
+    executeMrXAiTurn: () => {
+      const { game, aiSettings } = get()
+      if (!game || game.phase === 'finished') return false
+
+      const mrx = game.players.find((p) => p.role === 'mrx')
+      if (!mrx) return false
+
+      const currentPlayer = getCurrentPlayer(game)
+      if (currentPlayer.role !== 'mrx') return false
+
+      const decision = getMrXMove(game, aiSettings.mrxDifficulty)
+      if (!decision) {
+        // Mr. X has no valid moves; advance turn
+        const newState = advanceTurn(game)
+        set({ game: newState, validMoves: [], blackTicketMoves: [] })
+        return false
+      }
+
+      let newState = game
+
+      // Handle double move activation first
+      if (decision.useDouble && mrx.tickets.double > 0) {
+        newState = applyDoubleMove(newState)
+      }
+
+      // Apply the main move
+      if (decision.useBlack) {
+        newState = applyBlackTicketMove(newState, decision.nodeId)
+      } else {
+        newState = applyMove(newState, mrx.id, decision.nodeId, decision.transport)
+      }
+
+      // Check win condition after first move
+      let winResult = checkWinCondition(newState)
+      if (winResult.winner) {
+        newState = {
+          ...newState,
+          phase: 'finished',
+          winner: winResult.winner,
+          winReason: winResult.reason,
+        }
+        set({ game: newState, validMoves: [], blackTicketMoves: [] })
+        return true
+      }
+
+      // If double move was used, apply the second move
+      if (decision.useDouble && decision.secondMove) {
+        const mrxAfterFirst = newState.players.find((p) => p.role === 'mrx')
+        if (mrxAfterFirst && newState.mrxState.doubleMovePending === false) {
+          // The second move of a double
+          if (decision.secondMove.useBlack) {
+            newState = applyBlackTicketMove(newState, decision.secondMove.nodeId)
+          } else {
+            newState = applyMove(
+              newState,
+              mrxAfterFirst.id,
+              decision.secondMove.nodeId,
+              decision.secondMove.transport,
+            )
+          }
+
+          winResult = checkWinCondition(newState)
+          if (winResult.winner) {
+            newState = {
+              ...newState,
+              phase: 'finished',
+              winner: winResult.winner,
+              winReason: winResult.reason,
+            }
+          }
+        }
+      }
+
+      set({ game: newState, validMoves: [], blackTicketMoves: [] })
+      return true
+    },
+
+    /**
+     * Executes an AI turn for a disconnected detective.
+     * Uses simple BFS-based strategy to move toward Mr. X's last known position.
+     * Returns true if a move was made, false otherwise.
+     */
+    executeDetectiveAiTurn: (playerId) => {
+      const { game } = get()
+      if (!game || game.phase === 'finished') return false
+
+      const detective = game.players.find((p) => p.id === playerId)
+      if (!detective || detective.isEliminated) return false
+
+      const decision = getDetectiveAiMove(game, playerId)
+      if (!decision) {
+        // Detective has no valid moves; advance turn
+        const newState = advanceTurn(game)
+        set({ game: newState, validMoves: [], blackTicketMoves: [] })
+        return false
+      }
+
+      let newState = applyMove(game, playerId, decision.nodeId, decision.transport)
+      const winResult = checkWinCondition(newState)
+      if (winResult.winner) {
+        newState = {
+          ...newState,
+          phase: 'finished',
+          winner: winResult.winner,
+          winReason: winResult.reason,
+        }
+      }
+
+      set({ game: newState, validMoves: [], blackTicketMoves: [] })
+      return true
     },
   })),
 )

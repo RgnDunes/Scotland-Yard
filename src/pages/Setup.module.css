@@ -196,6 +196,99 @@
   border-radius: var(--radius-sm);
 }
 
+/* ── AI Toggle & Difficulty ───────────────────────────────── */
+.aiToggle {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  padding: 12px 14px;
+  border-radius: var(--radius-md);
+  background: var(--bg-card);
+  border: 1px solid var(--color-border);
+  color: var(--color-text);
+  font-family: var(--font-body);
+  font-size: 14px;
+  font-weight: 500;
+  text-align: left;
+  transition: background var(--t-fast), border-color var(--t-fast);
+}
+
+.aiToggle:hover {
+  border-color: var(--color-text-muted);
+}
+
+.aiToggleActive {
+  background: var(--mrx-bg);
+  border-color: var(--mrx-accent);
+}
+
+.aiCheckbox {
+  width: 18px;
+  height: 18px;
+  border-radius: var(--radius-sm);
+  border: 2px solid var(--color-text-muted);
+  flex-shrink: 0;
+  position: relative;
+  transition: border-color var(--t-fast), background var(--t-fast);
+}
+
+.aiCheckboxChecked {
+  border-color: var(--mrx-accent);
+  background: var(--mrx-accent);
+}
+
+.aiCheckboxChecked::after {
+  content: '';
+  position: absolute;
+  top: 2px;
+  left: 5px;
+  width: 5px;
+  height: 9px;
+  border-right: 2px solid var(--color-text);
+  border-bottom: 2px solid var(--color-text);
+  transform: rotate(45deg);
+}
+
+.aiToggleLabel {
+  flex: 1;
+}
+
+.aiDifficultySection {
+  margin-top: 12px;
+  overflow: hidden;
+}
+
+.difficultySelector {
+  display: flex;
+  gap: 8px;
+}
+
+.difficultyButton {
+  flex: 1;
+  padding: 10px 0;
+  border-radius: var(--radius-md);
+  background: var(--bg-card);
+  border: 1px solid var(--color-border);
+  color: var(--color-text-muted);
+  font-family: var(--font-heading);
+  font-size: 13px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  transition: background var(--t-fast), border-color var(--t-fast), color var(--t-fast);
+}
+
+.difficultyButton:hover {
+  border-color: var(--color-text-muted);
+}
+
+.difficultyButtonActive {
+  background: var(--mrx-accent);
+  border-color: var(--mrx-accent);
+  color: var(--color-text);
+}
+
 /* ── Actions ──────────────────────────────────────────────── */
 .setupActions {
   display: flex;

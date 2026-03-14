@@ -34,6 +34,8 @@ function Setup() {
     Array.from({ length: MAX_PLAYERS }, (_, i) => DEFAULT_NAMES[i]),
   )
   const [mrxIndex, setMrxIndex] = useState(0)
+  const [mrxIsAi, setMrxIsAi] = useState(false)
+  const [mrxDifficulty, setMrxDifficulty] = useState('medium')
   const [error, setError] = useState(null)
 
   const handleCountChange = useCallback(
@@ -58,6 +60,14 @@ function Setup() {
 
   const handleMrxSelect = useCallback((index) => {
     setMrxIndex(index)
+  }, [])
+
+  const handleAiToggle = useCallback(() => {
+    setMrxIsAi((prev) => !prev)
+  }, [])
+
+  const handleDifficultyChange = useCallback((level) => {
+    setMrxDifficulty(level)
   }, [])
 
   const handleBack = useCallback(() => {
@@ -86,9 +96,13 @@ function Setup() {
     }
 
     const finalNames = activeNames.map((n) => n.trim())
-    initLocalGame(finalNames, mrxIndex)
+    const aiSettings = {
+      mrxIsAi,
+      mrxDifficulty: mrxIsAi ? mrxDifficulty : 'medium',
+    }
+    initLocalGame(finalNames, mrxIndex, aiSettings)
     navigate('/game/local')
-  }, [names, playerCount, mrxIndex, initLocalGame, navigate])
+  }, [names, playerCount, mrxIndex, mrxIsAi, mrxDifficulty, initLocalGame, navigate])
 
   const activePlayers = names.slice(0, playerCount)
 
@@ -187,6 +201,46 @@ function Setup() {
               </motion.button>
             ))}
           </div>
+        </div>
+
+        {/* Mr. X AI Options */}
+        <div className={styles.setupSection}>
+          <motion.button
+            className={`${styles.aiToggle} ${mrxIsAi ? styles.aiToggleActive : ''}`}
+            onClick={handleAiToggle}
+            whileTap={{ scale: 0.98 }}
+          >
+            <span
+              className={`${styles.aiCheckbox} ${mrxIsAi ? styles.aiCheckboxChecked : ''}`}
+            />
+            <span className={styles.aiToggleLabel}>Mr. X is AI controlled</span>
+          </motion.button>
+
+          <AnimatePresence>
+            {mrxIsAi && (
+              <motion.div
+                className={styles.aiDifficultySection}
+                initial={{ opacity: 0, height: 0 }}
+                animate={{ opacity: 1, height: 'auto' }}
+                exit={{ opacity: 0, height: 0 }}
+                transition={{ duration: 0.2 }}
+              >
+                <label className={styles.setupLabel}>AI Difficulty</label>
+                <div className={styles.difficultySelector}>
+                  {['easy', 'medium', 'hard'].map((level) => (
+                    <motion.button
+                      key={level}
+                      className={`${styles.difficultyButton} ${mrxDifficulty === level ? styles.difficultyButtonActive : ''}`}
+                      onClick={() => handleDifficultyChange(level)}
+                      whileTap={{ scale: 0.95 }}
+                    >
+                      {level.charAt(0).toUpperCase() + level.slice(1)}
+                    </motion.button>
+                  ))}
+                </div>
+              </motion.div>
+            )}
+          </AnimatePresence>
         </div>
 
         {error && <p className={styles.setupError}>{error}</p>}

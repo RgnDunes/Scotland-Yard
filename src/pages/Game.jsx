@@ -59,6 +59,8 @@ function Game() {
   const passTurn = useGameStore((s) => s.passTurn)
   const setCurrentLocalPlayer = useGameStore((s) => s.setCurrentLocalPlayer)
   const getCurrentTurnPlayer = useGameStore((s) => s.getCurrentTurnPlayer)
+  const aiSettings = useGameStore((s) => s.aiSettings)
+  const executeMrXAiTurn = useGameStore((s) => s.executeMrXAiTurn)
 
   const showModal = useUIStore((s) => s.showModal)
   const addToast = useUIStore((s) => s.addToast)
@@ -93,6 +95,13 @@ function Game() {
 
   const turnKey = hasGame ? `${game.turn}-${game.currentPlayerIndex}` : null
 
+  /* Derived: is Mr. X AI and is it currently Mr. X's turn? */
+  const mrxIsAi = isLocal && aiSettings.mrxIsAi
+  const isAiMrXTurn = mrxIsAi && isMrXTurn && !isFinished
+
+  /* Ref to track whether an AI turn is currently being processed */
+  const aiTurnInProgressRef = useRef(false)
+
   /* ── LOCAL: Turn change detection ───────────────────────── */
   useEffect(() => {
     if (!isLocal || !hasGame || isFinished || turnKey == null) return
@@ -116,10 +125,39 @@ function Game() {
         return
       }
 
+      /* If it's Mr. X AI turn, skip the pass device modal */
+      const g = useGameStore.getState().game
+      const aiState = useGameStore.getState().aiSettings
+      if (g && aiState.mrxIsAi) {
+        const cp = g.players[g.currentPlayerIndex]
+        if (cp && cp.role === 'mrx') {
+          return
+        }
+      }
+
       /* No reveal pending - show pass device modal directly */
       showPassDevice()
     }
   }, [turnKey, hasGame, isFinished, isLocal])
+
+  /* ── LOCAL: AI Mr. X turn execution ──────────────────────── */
+  useEffect(() => {
+    if (!isAiMrXTurn || !hasGame || aiTurnInProgressRef.current) return
+
+    aiTurnInProgressRef.current = true
+    addToast('Mr. X is making a move...', 'info')
+    setAwaitingPassDevice(false)
+
+    const timer = setTimeout(() => {
+      executeMrXAiTurn()
+      aiTurnInProgressRef.current = false
+    }, 800)
+
+    return () => {
+      clearTimeout(timer)
+      aiTurnInProgressRef.current = false
+    }
+  }, [isAiMrXTurn, hasGame, turnKey])
 
   /* LOCAL: When reveal modal is dismissed, show pass device modal */
   useEffect(() => {
@@ -312,7 +350,8 @@ function Game() {
     (isLocal ? !awaitingPassDevice : isMyTurn) &&
     validMoves.length === 0 &&
     blackTicketMoves.length === 0 &&
-    !isFinished
+    !isFinished &&
+    !isAiMrXTurn
 
   /* ── Online: who is the "my" player for the bottom bar ──── */
   const myPlayer = isOnline
@@ -325,10 +364,10 @@ function Game() {
     ? myPlayer != null
     : currentPlayer != null && !awaitingPassDevice
 
-  /* For Mr. X actions, determine if we should show them */
+  /* For Mr. X actions, determine if we should show them (hidden when AI) */
   const showMrXActions = isOnline
     ? myRole === 'mrx' && isMyTurn
-    : isMrXTurn
+    : isMrXTurn && !mrxIsAi
 
   /* ── Sidebar tab handlers ───────────────────────────────── */
   const handleTabPlayers = useCallback(() => {
