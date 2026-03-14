@@ -1,0 +1,258 @@
+/* ── Setup Page ─────────────────────────────────────────────── */
+.setupPage {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background: var(--bg-dark);
+  padding: 40px 20px;
+}
+
+.setupContent {
+  max-width: 480px;
+  width: 100%;
+}
+
+.setupHeader {
+  text-align: center;
+  margin-bottom: 32px;
+}
+
+.setupTitle {
+  font-family: var(--font-heading);
+  font-size: 28px;
+  font-weight: 700;
+  color: var(--color-text);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  margin-bottom: 8px;
+}
+
+.setupSubtitle {
+  font-family: var(--font-body);
+  font-size: 14px;
+  color: var(--color-text-muted);
+}
+
+/* ── Form Sections ────────────────────────────────────────── */
+.setupSection {
+  margin-bottom: 24px;
+}
+
+.setupLabel {
+  display: block;
+  font-family: var(--font-heading);
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--color-text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-bottom: 10px;
+}
+
+/* ── Player Count ─────────────────────────────────────────── */
+.countSelector {
+  display: flex;
+  gap: 8px;
+}
+
+.countButton {
+  flex: 1;
+  padding: 12px 0;
+  border-radius: var(--radius-md);
+  background: var(--bg-card);
+  border: 1px solid var(--color-border);
+  color: var(--color-text-muted);
+  font-family: var(--font-heading);
+  font-size: 18px;
+  font-weight: 700;
+  transition: background var(--t-fast), border-color var(--t-fast), color var(--t-fast);
+}
+
+.countButton:hover {
+  border-color: var(--color-text-muted);
+}
+
+.countButtonActive {
+  background: var(--color-primary);
+  border-color: var(--color-primary);
+  color: var(--color-text);
+}
+
+/* ── Player Name Inputs ───────────────────────────────────── */
+.playerInputs {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.playerInput {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 14px;
+  border-radius: var(--radius-md);
+  background: var(--bg-card);
+  border: 1px solid var(--color-border);
+  transition: border-color var(--t-fast);
+}
+
+.playerInput:focus-within {
+  border-color: var(--color-primary);
+}
+
+.playerInputDot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.playerInputField {
+  flex: 1;
+  background: none;
+  border: none;
+  outline: none;
+  color: var(--color-text);
+  font-family: var(--font-body);
+  font-size: 15px;
+}
+
+.playerInputField::placeholder {
+  color: var(--color-text-muted);
+  opacity: 0.6;
+}
+
+/* ── Mr. X Selector ───────────────────────────────────────── */
+.mrxSelector {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.mrxOption {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 14px;
+  border-radius: var(--radius-md);
+  background: var(--bg-card);
+  border: 1px solid var(--color-border);
+  color: var(--color-text);
+  font-family: var(--font-body);
+  font-size: 14px;
+  font-weight: 500;
+  text-align: left;
+  transition: background var(--t-fast), border-color var(--t-fast);
+}
+
+.mrxOption:hover {
+  border-color: var(--color-text-muted);
+}
+
+.mrxOptionActive {
+  background: var(--mrx-bg);
+  border-color: var(--mrx-color);
+}
+
+.mrxRadio {
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  border: 2px solid var(--color-text-muted);
+  flex-shrink: 0;
+  position: relative;
+  transition: border-color var(--t-fast);
+}
+
+.mrxOptionActive .mrxRadio {
+  border-color: var(--mrx-accent);
+}
+
+.mrxOptionActive .mrxRadio::after {
+  content: '';
+  position: absolute;
+  top: 3px;
+  left: 3px;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--mrx-accent);
+}
+
+.mrxOptionName {
+  flex: 1;
+}
+
+.mrxOptionBadge {
+  font-family: var(--font-body);
+  font-size: 10px;
+  font-weight: 600;
+  text-transform: uppercase;
+  color: var(--mrx-accent);
+  background: rgba(198, 40, 40, 0.2);
+  padding: 2px 8px;
+  border-radius: var(--radius-sm);
+}
+
+/* ── Actions ──────────────────────────────────────────────── */
+.setupActions {
+  display: flex;
+  gap: 12px;
+  margin-top: 32px;
+}
+
+.backButton {
+  padding: 14px 24px;
+  border-radius: var(--radius-lg);
+  background: var(--bg-surface);
+  border: 1px solid var(--color-border);
+  color: var(--color-text);
+  font-family: var(--font-heading);
+  font-size: 15px;
+  font-weight: 600;
+  transition: background var(--t-fast), border-color var(--t-fast);
+}
+
+.backButton:hover {
+  background: var(--bg-card);
+  border-color: var(--color-text-muted);
+}
+
+.startButton {
+  flex: 1;
+  padding: 14px 24px;
+  border-radius: var(--radius-lg);
+  background: var(--color-primary);
+  color: var(--color-text);
+  font-family: var(--font-heading);
+  font-size: 16px;
+  font-weight: 600;
+  transition: background var(--t-fast);
+}
+
+.startButton:hover {
+  background: var(--color-primary-hover);
+}
+
+.startButton:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+/* ── Error ─────────────────────────────────────────────────── */
+.setupError {
+  font-family: var(--font-body);
+  font-size: 13px;
+  color: var(--color-danger);
+  margin-top: 12px;
+  text-align: center;
+}
+
+/* ── Mobile ───────────────────────────────────────────────── */
+@media (max-width: 767px) {
+  .setupTitle {
+    font-size: 22px;
+  }
+}

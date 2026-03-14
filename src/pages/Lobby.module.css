@@ -1,0 +1,64 @@
+/* ── Lobby Page ─────────────────────────────────────────────── */
+.lobbyPage {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background: var(--bg-dark);
+  padding: 40px 20px;
+}
+
+.lobbyContent {
+  text-align: center;
+  max-width: 440px;
+  width: 100%;
+}
+
+.lobbyTitle {
+  font-family: var(--font-heading);
+  font-size: 28px;
+  font-weight: 700;
+  color: var(--color-text);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  margin-bottom: 16px;
+}
+
+.lobbyBadge {
+  display: inline-block;
+  padding: 6px 18px;
+  border-radius: var(--radius-lg);
+  background: rgba(88, 101, 242, 0.12);
+  border: 1px solid var(--color-primary);
+  font-family: var(--font-heading);
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--color-primary);
+  margin-bottom: 32px;
+}
+
+.lobbyText {
+  font-family: var(--font-body);
+  font-size: 16px;
+  color: var(--color-text-muted);
+  margin-bottom: 40px;
+  line-height: 1.6;
+}
+
+.lobbyBackButton {
+  padding: 12px 32px;
+  border-radius: var(--radius-lg);
+  background: var(--bg-surface);
+  border: 1px solid var(--color-border);
+  color: var(--color-text);
+  font-family: var(--font-heading);
+  font-size: 15px;
+  font-weight: 600;
+  transition: background var(--t-fast), border-color var(--t-fast);
+}
+
+.lobbyBackButton:hover {
+  background: var(--bg-card);
+  border-color: var(--color-text-muted);
+}

@@ -45,7 +45,7 @@ function buildEdgeList() {
 /** All 199 node IDs */
 const NODE_IDS = Array.from({ length: 199 }, (_, i) => i + 1)
 
-function MapBoard() {
+function MapBoard({ onNodeClick: onNodeClickProp }) {
   const [isMobile, setIsMobile] = useState(false)
 
   const hoveredNode = useUIStore((s) => s.hoveredNode)
@@ -98,7 +98,7 @@ function MapBoard() {
   const validMoveSet = useMemo(() => {
     const s = new Set()
     for (const move of validMoves) {
-      s.add(move.destination)
+      s.add(move.nodeId)
     }
     return s
   }, [validMoves])
@@ -122,13 +122,18 @@ function MapBoard() {
     (nodeId) => {
       if (!game) return
 
+      if (onNodeClickProp) {
+        onNodeClickProp(nodeId)
+        return
+      }
+
       /* If a valid move targets this node, execute it */
-      const move = validMoves.find((m) => m.destination === nodeId)
+      const move = validMoves.find((m) => m.nodeId === nodeId)
       if (move) {
         makeMove(nodeId, move.transport)
       }
     },
-    [game, validMoves, makeMove],
+    [game, validMoves, makeMove, onNodeClickProp],
   )
 
   const handleNodeHover = useCallback(
