@@ -174,8 +174,57 @@ const useGameStore = create(
       set({ game: newState, validMoves: [], blackTicketMoves: [] })
     },
 
+    /**
+     * Sets the store into online multiplayer mode.
+     * Called when the server confirms the game has started.
+     */
+    setOnlineMode: (playerId, role) => {
+      set({
+        mode: 'online',
+        myPlayerId: playerId,
+        myRole: role,
+        isMyTurn: false,
+        validMoves: [],
+        blackTicketMoves: [],
+      })
+    },
+
+    /**
+     * Syncs the full game state received from the server.
+     * In online mode, recomputes validMoves if it is this player's turn.
+     */
     syncFromServer: (gameState) => {
-      set({ game: gameState })
+      const { myPlayerId, mode } = get()
+
+      if (mode === 'online' && myPlayerId && gameState) {
+        const currentPlayer = getCurrentPlayer(gameState)
+        const isMyTurn = currentPlayer?.id === myPlayerId
+
+        if (isMyTurn) {
+          const moves = getValidMoves(gameState, myPlayerId)
+          const player = gameState.players.find((p) => p.id === myPlayerId)
+          const blackMoves =
+            player?.role === 'mrx' && player.tickets.black > 0
+              ? getBlackTicketMoves(gameState, player)
+              : []
+
+          set({
+            game: gameState,
+            isMyTurn: true,
+            validMoves: moves,
+            blackTicketMoves: blackMoves,
+          })
+        } else {
+          set({
+            game: gameState,
+            isMyTurn: false,
+            validMoves: [],
+            blackTicketMoves: [],
+          })
+        }
+      } else {
+        set({ game: gameState })
+      }
     },
 
     getMrXPosition: () => {

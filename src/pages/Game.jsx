@@ -1,8 +1,10 @@
 import { useState, useCallback, useEffect, useRef } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { motion } from 'framer-motion'
+import { motion, AnimatePresence } from 'framer-motion'
 import useGameStore from '../store/gameStore.js'
 import useUIStore from '../store/uiStore.js'
+import { useSocket } from '../hooks/useSocket.js'
+import { CLIENT_EVENTS } from '../multiplayer/events.js'
 import MapBoard from '../components/Map/MapBoard.jsx'
 import TurnBanner from '../components/HUD/TurnBanner.jsx'
 import RevealCountdown from '../components/HUD/RevealCountdown.jsx'
@@ -21,9 +23,9 @@ const SIDEBAR_TAB_PLAYERS = 'players'
 const SIDEBAR_TAB_LOG = 'log'
 
 /**
- * Main game page that orchestrates the full local hot-seat game loop.
+ * Main game page that orchestrates both local hot-seat and online multiplayer.
  *
- * Turn flow:
+ * Local turn flow:
  * 1. Show PassDeviceModal for current player
  * 2. Player dismisses modal -> set them as current local player
  * 3. Show map with valid moves highlighted
@@ -32,6 +34,13 @@ const SIDEBAR_TAB_LOG = 'log'
  *    - Single transport -> make move directly
  * 5. After move: check win, if reveal turn show RevealModal, advance turn
  * 6. Game over -> show EndScreen
+ *
+ * Online mode:
+ * - No PassDeviceModal (each player sees their own screen)
+ * - Moves emit MAKE_MOVE via socket; server handles state
+ * - Game state arrives via syncFromServer
+ * - Mr. X sees their position; detectives do not
+ * - Connection status overlay on disconnect
  */
 function Game() {
   const navigate = useNavigate()
@@ -39,7 +48,9 @@ function Game() {
   /* ── Store selectors ──────────────────────────────────────── */
   const game = useGameStore((s) => s.game)
   const mode = useGameStore((s) => s.mode)
+  const myPlayerId = useGameStore((s) => s.myPlayerId)
   const myRole = useGameStore((s) => s.myRole)
+  const isMyTurn = useGameStore((s) => s.isMyTurn)
   const validMoves = useGameStore((s) => s.validMoves)
   const blackTicketMoves = useGameStore((s) => s.blackTicketMoves)
   const makeMove = useGameStore((s) => s.makeMove)
@@ -53,18 +64,24 @@ function Game() {
   const addToast = useUIStore((s) => s.addToast)
   const setHighlightedNodes = useUIStore((s) => s.setHighlightedNodes)
 
+  const isOnline = mode === 'online'
+  const isLocal = mode === 'local'
+
+  /* ── Socket (only active in online mode) ────────────────── */
+  const { connected, emit } = useSocket({ enabled: isOnline })
+
   /* ── Local state ──────────────────────────────────────────── */
   const [sidebarTab, setSidebarTab] = useState(SIDEBAR_TAB_PLAYERS)
   const [blackTicketMode, setBlackTicketMode] = useState(false)
-  const [awaitingPassDevice, setAwaitingPassDevice] = useState(true)
+  const [awaitingPassDevice, setAwaitingPassDevice] = useState(isLocal)
   const [pendingReveal, setPendingReveal] = useState(false)
 
-  /* Track previous turn/player to detect changes */
+  /* Track previous turn/player to detect changes (local mode) */
   const prevTurnKeyRef = useRef(null)
   /* Track which reveal entries we have already shown */
   const shownRevealsRef = useRef(0)
 
-  const hasGame = game != null && mode === 'local'
+  const hasGame = game != null && (isLocal || isOnline)
   const currentPlayer = hasGame ? getCurrentTurnPlayer() : null
   const isFinished = game?.phase === 'finished'
   const isMrXTurn = currentPlayer?.role === 'mrx'
@@ -74,13 +91,11 @@ function Game() {
   const hasBlackTicket = (mrx?.tickets.black ?? 0) > 0
   const isDoubleMoveActive = game?.mrxState?.isDoubleMoveActive || false
 
-  const turnKey = hasGame
-    ? `${game.turn}-${game.currentPlayerIndex}`
-    : null
+  const turnKey = hasGame ? `${game.turn}-${game.currentPlayerIndex}` : null
 
-  /* ── Turn change detection ────────────────────────────────── */
+  /* ── LOCAL: Turn change detection ───────────────────────── */
   useEffect(() => {
-    if (!hasGame || isFinished || turnKey == null) return
+    if (!isLocal || !hasGame || isFinished || turnKey == null) return
 
     if (prevTurnKeyRef.current !== turnKey) {
       prevTurnKeyRef.current = turnKey
@@ -104,11 +119,11 @@ function Game() {
       /* No reveal pending - show pass device modal directly */
       showPassDevice()
     }
-  }, [turnKey, hasGame, isFinished])
+  }, [turnKey, hasGame, isFinished, isLocal])
 
-  /* When reveal modal is dismissed, show pass device modal */
+  /* LOCAL: When reveal modal is dismissed, show pass device modal */
   useEffect(() => {
-    if (!pendingReveal) return
+    if (!isLocal || !pendingReveal) return
 
     const checkInterval = setInterval(() => {
       const activeModal = useUIStore.getState().activeModal
@@ -120,7 +135,13 @@ function Game() {
     }, 200)
 
     return () => clearInterval(checkInterval)
-  }, [pendingReveal])
+  }, [pendingReveal, isLocal])
+
+  /* ── ONLINE: Reset black ticket mode on turn change ──────── */
+  useEffect(() => {
+    if (!isOnline || !hasGame) return
+    setBlackTicketMode(false)
+  }, [turnKey, isOnline, hasGame])
 
   /* ── Highlight valid moves when player is set ──────────── */
   useEffect(() => {
@@ -133,14 +154,20 @@ function Game() {
     } else {
       setHighlightedNodes([])
     }
-  }, [validMoves, blackTicketMoves, blackTicketMode, setHighlightedNodes, hasGame])
+  }, [
+    validMoves,
+    blackTicketMoves,
+    blackTicketMode,
+    setHighlightedNodes,
+    hasGame,
+  ])
 
   /* Clean up highlights on unmount */
   useEffect(() => {
     return () => setHighlightedNodes([])
   }, [setHighlightedNodes])
 
-  /* ── Pass device flow ─────────────────────────────────────── */
+  /* ── LOCAL: Pass device flow ────────────────────────────── */
   function showPassDevice() {
     const state = useGameStore.getState()
     const g = state.game
@@ -173,16 +200,26 @@ function Game() {
     })
   }
 
-  /* ── Node click handler (intercepts MapBoard clicks) ──────── */
+  /* ── Node click handler ─────────────────────────────────── */
   const handleNodeClick = useCallback(
     (nodeId) => {
-      if (!hasGame || isFinished || awaitingPassDevice) return
+      if (!hasGame || isFinished) return
+
+      /* Local mode: guard against pass device state */
+      if (isLocal && awaitingPassDevice) return
+      /* Online mode: guard against it not being our turn */
+      if (isOnline && !isMyTurn) return
+
       if (!currentPlayer) return
 
       /* Black ticket mode for Mr. X */
       if (blackTicketMode && isMrXTurn) {
         if (blackTicketMoves.includes(nodeId)) {
-          storeUseBlackTicket(nodeId)
+          if (isOnline) {
+            emit(CLIENT_EVENTS.USE_BLACK_TICKET, { nodeId })
+          } else {
+            storeUseBlackTicket(nodeId)
+          }
           setBlackTicketMode(false)
           addToast('Mr. X used a Black Ticket', 'info')
         }
@@ -194,7 +231,12 @@ function Game() {
       if (movesForNode.length === 0) return
 
       if (movesForNode.length === 1) {
-        makeMove(nodeId, movesForNode[0].transport)
+        const transport = movesForNode[0].transport
+        if (isOnline) {
+          emit(CLIENT_EVENTS.MAKE_MOVE, { nodeId, transport })
+        } else {
+          makeMove(nodeId, transport)
+        }
         addToast(
           `${currentPlayer.name} moved to station ${nodeId}`,
           'success',
@@ -204,7 +246,11 @@ function Game() {
           nodeId,
           availableTransports: movesForNode.map((m) => m.transport),
           onSelect: (transport) => {
-            makeMove(nodeId, transport)
+            if (isOnline) {
+              emit(CLIENT_EVENTS.MAKE_MOVE, { nodeId, transport })
+            } else {
+              makeMove(nodeId, transport)
+            }
             addToast(
               `${currentPlayer.name} moved to station ${nodeId}`,
               'success',
@@ -216,7 +262,10 @@ function Game() {
     [
       hasGame,
       isFinished,
+      isLocal,
+      isOnline,
       awaitingPassDevice,
+      isMyTurn,
       currentPlayer,
       blackTicketMode,
       isMrXTurn,
@@ -226,37 +275,62 @@ function Game() {
       storeUseBlackTicket,
       showModal,
       addToast,
+      emit,
     ],
   )
 
-  /* ── Mr. X: Double Move ───────────────────────────────────── */
+  /* ── Mr. X: Double Move ─────────────────────────────────── */
   const handleDoubleMove = useCallback(() => {
     if (!isMrXTurn || !hasDoubleTicket) return
-    storeUseDoubleMove()
+    if (isOnline) {
+      emit(CLIENT_EVENTS.USE_DOUBLE_MOVE, {})
+    } else {
+      storeUseDoubleMove()
+    }
     addToast('Mr. X activated Double Move!', 'warning')
-  }, [isMrXTurn, hasDoubleTicket, storeUseDoubleMove, addToast])
+  }, [isMrXTurn, hasDoubleTicket, isOnline, storeUseDoubleMove, addToast, emit])
 
-  /* ── Mr. X: Toggle Black Ticket Mode ──────────────────────── */
+  /* ── Mr. X: Toggle Black Ticket Mode ────────────────────── */
   const handleToggleBlackTicket = useCallback(() => {
     setBlackTicketMode((prev) => !prev)
   }, [])
 
-  /* ── Skip turn (no valid moves) ───────────────────────────── */
+  /* ── Skip turn (no valid moves) ─────────────────────────── */
   const handleSkipTurn = useCallback(() => {
     if (!currentPlayer) return
     addToast(`${currentPlayer.name} passed (no valid moves).`, 'warning')
-    passTurn()
-  }, [currentPlayer, addToast, passTurn])
+    if (isOnline) {
+      emit(CLIENT_EVENTS.PASS_TURN, {})
+    } else {
+      passTurn()
+    }
+  }, [currentPlayer, addToast, isOnline, passTurn, emit])
 
-  /* ── Check if current player has no valid moves ───────────── */
+  /* ── Determine if current player has no valid moves ─────── */
   const hasNoMoves =
     hasGame &&
-    !awaitingPassDevice &&
+    (isLocal ? !awaitingPassDevice : isMyTurn) &&
     validMoves.length === 0 &&
     blackTicketMoves.length === 0 &&
     !isFinished
 
-  /* ── Sidebar tab handlers ─────────────────────────────────── */
+  /* ── Online: who is the "my" player for the bottom bar ──── */
+  const myPlayer = isOnline
+    ? game?.players.find((p) => p.id === myPlayerId) ?? null
+    : null
+
+  /* For the bottom bar, determine which player to display info for */
+  const bottomBarPlayer = isOnline ? myPlayer : currentPlayer
+  const showBottomBar = isOnline
+    ? myPlayer != null
+    : currentPlayer != null && !awaitingPassDevice
+
+  /* For Mr. X actions, determine if we should show them */
+  const showMrXActions = isOnline
+    ? myRole === 'mrx' && isMyTurn
+    : isMrXTurn
+
+  /* ── Sidebar tab handlers ───────────────────────────────── */
   const handleTabPlayers = useCallback(() => {
     setSidebarTab(SIDEBAR_TAB_PLAYERS)
   }, [])
@@ -265,7 +339,7 @@ function Game() {
     setSidebarTab(SIDEBAR_TAB_LOG)
   }, [])
 
-  /* ── No game: show empty state ────────────────────────────── */
+  /* ── No game: show empty state ──────────────────────────── */
   if (!hasGame) {
     return (
       <div className={styles.emptyState}>
@@ -287,10 +361,38 @@ function Game() {
 
   return (
     <div className={styles.gamePage}>
+      {/* ── Connection Overlay (online mode) ──────────────── */}
+      <AnimatePresence>
+        {isOnline && !connected && (
+          <motion.div
+            className={styles.connectionOverlay}
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.3 }}
+          >
+            <div className={styles.connectionOverlayContent}>
+              <span className={styles.connectionOverlayDot} />
+              <span className={styles.connectionOverlayText}>
+                Connection lost. Reconnecting...
+              </span>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
       {/* ── Header ──────────────────────────────────────────── */}
       <header className={styles.gameHeader}>
         <div className={styles.gameHeaderLeft}>
           <TurnBanner />
+          {isOnline && !isMyTurn && !isFinished && (
+            <span className={styles.waitingIndicator}>
+              Waiting for other player...
+            </span>
+          )}
+          {isOnline && isMyTurn && !isFinished && (
+            <span className={styles.yourTurnIndicator}>Your Turn</span>
+          )}
         </div>
         <div className={styles.gameHeaderRight}>
           <RevealCountdown />
@@ -298,6 +400,11 @@ function Game() {
             <span className={styles.doubleMoveIndicator}>
               Double Move Active
             </span>
+          )}
+          {isOnline && (
+            <span
+              className={`${styles.onlineStatusDot} ${connected ? styles.onlineStatusConnected : styles.onlineStatusDisconnected}`}
+            />
           )}
         </div>
       </header>
@@ -337,17 +444,17 @@ function Game() {
 
       {/* ── Bottom Bar ──────────────────────────────────────── */}
       <div className={styles.gameBottom}>
-        {currentPlayer && !awaitingPassDevice && (
+        {showBottomBar && (
           <>
             <span className={styles.gameBottomLabel}>
-              {currentPlayer.name}
+              {bottomBarPlayer.name}
             </span>
             <div className={styles.gameBottomTickets}>
-              <TicketHand playerId={currentPlayer.id} />
+              <TicketHand playerId={bottomBarPlayer.id} />
             </div>
 
             {/* Mr. X special actions */}
-            {isMrXTurn && (
+            {showMrXActions && (
               <>
                 <motion.button
                   className={styles.doubleMoveButton}
@@ -386,7 +493,9 @@ function Game() {
       {hasNoMoves && (
         <div className={styles.noMovesBar}>
           <span className={styles.noMovesText}>
-            {currentPlayer?.name} has no valid moves.
+            {(isOnline ? myPlayer?.name : currentPlayer?.name) ||
+              'Player'}{' '}
+            has no valid moves.
           </span>
           <motion.button
             className={styles.noMovesSkipButton}
@@ -402,7 +511,7 @@ function Game() {
       {/* ── Modals & Overlays ───────────────────────────────── */}
       <Toast />
       <TicketSelectModal />
-      <PassDeviceModal />
+      {isLocal && <PassDeviceModal />}
       <RevealModal />
       <EndScreen />
     </div>
