@@ -186,14 +186,57 @@
   }
 }
 
-/* ── Mobile: disable pan/zoom, scale to fit ────────────────── */
-@media (max-width: 767px) {
+/* ── Screen reader only (visually hidden) ──────────────────── */
+.srOnly {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* ── Focus styles for keyboard navigation ──────────────────── */
+.node:focus-visible .nodeFill {
+  stroke: var(--color-primary);
+  stroke-width: 3;
+  filter: drop-shadow(0 0 6px var(--color-primary));
+}
+
+/* ── Mobile: disable pan/zoom, scale to fit, larger targets ── */
+@media (max-width: 768px) {
   .mapContainer {
     touch-action: auto;
+    overflow: auto;
+    -webkit-overflow-scrolling: touch;
   }
 
   .mapSvg {
     width: 100%;
     height: auto;
+  }
+
+  /*
+   * Increase hit area for touch devices by making node circles
+   * render larger (via SVG scaling on the parent viewBox).
+   * The transparent hit-area circle ensures 44px minimum touch target.
+   */
+  .node {
+    cursor: pointer;
+  }
+
+  .nodeLabel {
+    font-size: 9px;
+  }
+
+  .tokenCircle {
+    stroke-width: 2.5;
+  }
+
+  .tokenText {
+    font-size: 14px;
   }
 }

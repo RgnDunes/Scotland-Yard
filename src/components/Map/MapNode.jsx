@@ -5,7 +5,7 @@ import styles from './Map.module.css'
 
 const undergroundSet = new Set(UNDERGROUND_STATIONS)
 
-function MapNode({ nodeId, isHighlighted, isHovered, hasDetective, hasMrX, onClick }) {
+function MapNode({ nodeId, isHighlighted, isHovered, hasDetective, hasMrX, isSelected, onClick }) {
   const loc = locations[nodeId]
   if (!loc) return null
 
@@ -20,6 +20,17 @@ function MapNode({ nodeId, isHighlighted, isHovered, hasDetective, hasMrX, onCli
     [onClick, nodeId],
   )
 
+  const handleKeyDown = useCallback(
+    (e) => {
+      if (e.key === 'Enter' || e.key === ' ') {
+        e.preventDefault()
+        e.stopPropagation()
+        if (onClick) onClick(nodeId)
+      }
+    },
+    [onClick, nodeId],
+  )
+
   let groupClass = styles.node
   if (isUnderground) groupClass += ` ${styles.nodeUnderground}`
   if (isHighlighted) groupClass += ` ${styles.nodeHighlighted}`
@@ -30,9 +41,11 @@ function MapNode({ nodeId, isHighlighted, isHovered, hasDetective, hasMrX, onCli
     <g
       className={groupClass}
       onClick={handleClick}
+      onKeyDown={handleKeyDown}
       role="button"
-      tabIndex={-1}
-      aria-label={`Station ${nodeId}`}
+      tabIndex={isHighlighted ? 0 : -1}
+      aria-label={`Station ${nodeId}${isHighlighted ? ', valid move' : ''}${hasDetective ? ', occupied by detective' : ''}${hasMrX ? ', Mr. X location' : ''}`}
+      aria-pressed={isSelected || undefined}
     >
       <circle
         cx={loc.x}
@@ -44,12 +57,13 @@ function MapNode({ nodeId, isHighlighted, isHovered, hasDetective, hasMrX, onCli
         x={loc.x}
         y={loc.y}
         className={styles.nodeLabel}
+        aria-hidden="true"
       >
         {nodeId}
       </text>
 
       {/* Tooltip shown on hover */}
-      <g className={`${styles.tooltip} ${isHovered ? styles.tooltipVisible : ''}`}>
+      <g className={`${styles.tooltip} ${isHovered ? styles.tooltipVisible : ''}`} aria-hidden="true">
         <rect
           x={loc.x - 16}
           y={loc.y - radius - 20}
@@ -69,4 +83,20 @@ function MapNode({ nodeId, isHighlighted, isHovered, hasDetective, hasMrX, onCli
   )
 }
 
-export default React.memo(MapNode)
+/**
+ * Custom comparison: only re-render when visual-affecting props change.
+ * nodeId and onClick identity are stable (useCallback in parent).
+ */
+function arePropsEqual(prev, next) {
+  return (
+    prev.nodeId === next.nodeId &&
+    prev.isHighlighted === next.isHighlighted &&
+    prev.isHovered === next.isHovered &&
+    prev.hasDetective === next.hasDetective &&
+    prev.hasMrX === next.hasMrX &&
+    prev.isSelected === next.isSelected &&
+    prev.onClick === next.onClick
+  )
+}
+
+export default React.memo(MapNode, arePropsEqual)
