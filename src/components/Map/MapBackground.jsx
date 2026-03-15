@@ -9,7 +9,7 @@ function MapBackground() {
   return (
     <g className="map-background" aria-hidden="true">
       {/* Street grid lines */}
-      <g opacity={0.35} stroke="#8b7355" strokeWidth={1.5}>
+      <g opacity={0.6} stroke="#8b7355" strokeWidth={2}>
         {/* Horizontal streets */}
         <line x1={30} y1={200} x2={1610} y2={200} />
         <line x1={30} y1={400} x2={1610} y2={400} />
@@ -25,19 +25,19 @@ function MapBackground() {
       </g>
 
       {/* Parks / green areas */}
-      <ellipse cx={420} cy={180} rx={120} ry={60} fill="#4caf50" opacity={0.45} />
-      <text x={420} y={185} textAnchor="middle" fontSize={18} fill="#1b5e20" opacity={0.8} fontStyle="italic" fontWeight={700}>
+      <ellipse cx={420} cy={180} rx={120} ry={60} fill="#388e3c" opacity={0.7} />
+      <text x={420} y={185} textAnchor="middle" fontSize={20} fill="#1b5e20" opacity={1} fontStyle="italic" fontWeight={800}>
         Regent&apos;s Park
       </text>
 
-      <ellipse cx={350} cy={500} rx={100} ry={70} fill="#4caf50" opacity={0.45} />
-      <text x={350} y={505} textAnchor="middle" fontSize={16} fill="#1b5e20" opacity={0.8} fontStyle="italic" fontWeight={700}>
+      <ellipse cx={350} cy={500} rx={100} ry={70} fill="#388e3c" opacity={0.7} />
+      <text x={350} y={505} textAnchor="middle" fontSize={18} fill="#1b5e20" opacity={1} fontStyle="italic" fontWeight={800}>
         Hyde Park
       </text>
 
-      <ellipse cx={680} cy={700} rx={60} ry={40} fill="#4caf50" opacity={0.35} />
+      <ellipse cx={680} cy={700} rx={60} ry={40} fill="#388e3c" opacity={0.55} />
 
-      <ellipse cx={250} cy={810} rx={70} ry={40} fill="#4caf50" opacity={0.35} />
+      <ellipse cx={250} cy={810} rx={70} ry={40} fill="#388e3c" opacity={0.55} />
 
       {/* Thames River */}
       <path
@@ -58,15 +58,15 @@ function MapBackground() {
           C 200 790, 100 750, 0 770
           Z
         `}
-        fill="#4a90c4"
-        opacity={0.5}
+        fill="#2980b9"
+        opacity={0.7}
       />
-      <text x={820} y={905} textAnchor="middle" fontSize={24} fill="#1a5276" opacity={0.7} fontStyle="italic" fontWeight={700}>
+      <text x={820} y={905} textAnchor="middle" fontSize={28} fill="#1a5276" opacity={0.9} fontStyle="italic" fontWeight={800}>
         River Thames
       </text>
 
       {/* District labels */}
-      <g fontSize={26} fontWeight={700} opacity={0.5} fill="#5c4a32" fontFamily="serif">
+      <g fontSize={30} fontWeight={800} opacity={0.75} fill="#3e2c1a" fontFamily="serif">
         <text x={140} y={300} textAnchor="middle">Paddington</text>
         <text x={500} y={130} textAnchor="middle">Marylebone</text>
         <text x={900} y={60} textAnchor="middle">Euston</text>

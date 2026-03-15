@@ -14,6 +14,7 @@ function PassDeviceModal() {
 
   const isOpen = activeModal === 'passDevice'
   const playerName = modalData?.playerName ?? 'Next Player'
+  const isMrX = modalData?.role === 'mrx'
 
   useEffect(() => {
     if (!isOpen) {
@@ -40,12 +41,13 @@ function PassDeviceModal() {
     <AnimatePresence>
       {isOpen && (
         <motion.div
-          className={styles.passOverlay}
+          className={`${styles.passOverlay} ${isMrX ? styles.passOverlayMrX : ''}`}
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
           transition={{ duration: 0.3 }}
         >
+          {isMrX && <div className={styles.passRadialGlow} />}
           <motion.div
             className={styles.passContent}
             initial={{ scale: 0.8, opacity: 0 }}
@@ -55,10 +57,10 @@ function PassDeviceModal() {
           >
             <h2 className={styles.passHeading}>Pass the Device</h2>
             <p className={styles.passSubtext}>Hand the device to</p>
-            <p className={styles.passPlayerName}>{playerName}</p>
+            <p className={`${styles.passPlayerName} ${isMrX ? styles.passPlayerNameMrX : ''}`}>{playerName}</p>
 
             <motion.button
-              className={`${styles.passButton} ${isReady ? styles.passButtonReady : ''}`}
+              className={`${styles.passButton} ${isReady ? (isMrX ? styles.passButtonMrX : styles.passButtonReady) : ''}`}
               onClick={handleBegin}
               disabled={!isReady}
               whileHover={isReady ? { scale: 1.05 } : {}}

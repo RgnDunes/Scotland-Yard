@@ -216,6 +216,7 @@ function Game() {
     setAwaitingPassDevice(true)
     showModal('passDevice', {
       playerName: player.name,
+      role: player.role,
       onReady: () => {
         setCurrentLocalPlayer(player.id)
         setAwaitingPassDevice(false)

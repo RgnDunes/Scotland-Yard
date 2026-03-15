@@ -164,6 +164,53 @@
   background: var(--color-primary-hover);
 }
 
+/* ── Mr. X Pass Device Theme ─────────────────────────────── */
+.passOverlayMrX {
+  background: var(--mrx-bg);
+}
+
+.passRadialGlow {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  background: radial-gradient(
+    circle at center,
+    rgba(198, 40, 40, 0.5) 0%,
+    rgba(198, 40, 40, 0.25) 25%,
+    rgba(198, 40, 40, 0.08) 50%,
+    transparent 70%
+  );
+  animation: mrxRadialSpread 1.8s ease-out forwards;
+}
+
+@keyframes mrxRadialSpread {
+  0% {
+    opacity: 0;
+    transform: scale(0.3);
+  }
+  40% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1.6);
+  }
+}
+
+.passPlayerNameMrX {
+  color: var(--mrx-accent);
+  text-shadow: 0 0 20px rgba(255, 23, 68, 0.4);
+}
+
+.passButtonMrX {
+  background: var(--mrx-color);
+  color: var(--color-text);
+}
+
+.passButtonMrX:hover {
+  background: var(--mrx-accent);
+}
+
 /* ── Reveal Modal ─────────────────────────────────────────── */
 .revealContainer {
   position: relative;
